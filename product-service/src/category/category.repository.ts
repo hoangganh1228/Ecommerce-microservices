@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Category } from './schemas/category.schema';
 import { Model } from 'mongoose';
-import { BaseRepository } from '../common/base.repository';
+import { BaseRepository } from '../common/base/base.repository';
 
 export class CategoryRepository extends BaseRepository<Category> {
     constructor(

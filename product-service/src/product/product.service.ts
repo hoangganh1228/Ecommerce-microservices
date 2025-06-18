@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
 import { Product } from './schemas/product.schema';
-import { Model } from 'mongoose';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { generateUniqueSlug } from '../utils/slug';
 import { ProductRepository } from './product.repository';
+import { buildMongooseQuery, MongooseQuery } from 'src/utils/build-mongoose-query';
+import { PaginationResult } from 'src/common/interfaces/pagination-result.interface';
 
 @Injectable()
 export class ProductService {
@@ -17,12 +17,20 @@ export class ProductService {
         return product;
     }
     
-    async findAll(): Promise<Product[]> {
-        let find = {
-            deleted: false
-        }
-        const products = await this.productRepository.findAll(find);
-        return products;
+    async findAll(query: MongooseQuery): Promise<PaginationResult<Product>> {
+        const { where, skip, limit, sort, page } = buildMongooseQuery(query);
+
+        const [data, total] = await this.productRepository.findAndCount({ where, skip, limit, sort });
+
+        return {
+            data,
+            meta: {
+            total,
+            page,
+            limit,
+            totalPages: Math.ceil(total / limit),
+            },
+        };
     }
 
     async findOne(id: string): Promise<Product> {
