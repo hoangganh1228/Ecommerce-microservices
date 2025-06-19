@@ -9,7 +9,7 @@ export interface MongooseQuery {
   filters?: Record<string, any>;
 }
 
-export function buildMongooseQuery(query: MongooseQuery) {
+export function buildMongooseQuery(query: MongooseQuery, ALLOWED_SORT_FIELDS = ['name', 'price', 'createdAt']) {
     const {
         page = DEFAULT_PAGE,
         limit = DEFAULT_LIMIT,
@@ -26,12 +26,23 @@ export function buildMongooseQuery(query: MongooseQuery) {
     };
 
     if(search) {
-        where.name = { $regex: search, $options: 'i' };
+        where.$or = [
+            { name: { $regex: search, $options: 'i' } },
+            { description: { $regex: search, $options: 'i' } },
+        ];
     }
+    const sort: Record<string, 1 | -1> = {};
 
-    const sort: Record<string, 1 | -1> = {
-        [sortBy]: sortOrder === 'asc' ? 1 as 1 : -1 as -1,
-    };
+    const sortFields = Array.isArray(sortBy) ? sortBy : String(sortBy).split(',');
+    
+    const sortOrders = Array.isArray(sortOrder) ? sortOrder : String(sortOrder).split(',');
+
+    sortFields.forEach((field, idx) => {
+        if (ALLOWED_SORT_FIELDS.includes(field)) {
+            const order = sortOrders[idx] || 'desc';
+            sort[field] = order === 'asc' ? 1 : -1;
+        }
+    });
 
     return { where, skip, limit, sort, page };
 }
