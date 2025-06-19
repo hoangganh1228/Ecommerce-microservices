@@ -11,8 +11,12 @@ RUN npm install
 # 4. Copy toàn bộ source code
 COPY . .
 
+RUN npm run build
+
+
 # 6. Khai báo port
-EXPOSE 3000
+EXPOSE 3004
 
 # 7. Command để start app
 CMD ["node", "dist/main.js"]
+
