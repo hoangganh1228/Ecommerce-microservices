@@ -1,16 +1,25 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { ProductQueryDto } from 'src/common/dto/product-query.dto';
-import { DEFAULT_LIMIT, DEFAULT_PAGE } from 'src/common/constants/pagination';
+import { ProductQueryDto } from 'src/common/pagination/product-query.dto';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { ImageUploadService } from 'src/common/image/image-upload.service';
 
 @Controller('products')
 export class ProductController {
-    constructor(private readonly productService: ProductService){}
+    constructor(
+        private readonly imageUploadService: ImageUploadService,
+        private readonly productService: ProductService,
+    ){}
 
     @Post()
-    create(@Body() dto: CreateProductDto) {
+    @UseInterceptors(FilesInterceptor('images'))
+    async create(
+        @UploadedFiles() files: Express.Multer.File[],
+        @Body() dto: CreateProductDto,
+    ) {
+        await this.imageUploadService.attachImages(dto, files);
         return this.productService.create(dto);
     }
 
@@ -25,7 +34,9 @@ export class ProductController {
     }
 
     @Patch(':id')
-    update(@Param('id') id: string, @Body() data: UpdateProductDto) {
+    @UseInterceptors(FilesInterceptor('images'))
+    async update(@Param('id') id: string, @Body() data: UpdateProductDto, @UploadedFiles() files: Express.Multer.File[],) {
+        await this.imageUploadService.attachImages(data, files);
         return this.productService.update(id, data);
     }
 

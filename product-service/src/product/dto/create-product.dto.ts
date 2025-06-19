@@ -1,4 +1,5 @@
-import { IsArray, IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from "class-validator";
+import { Type } from "class-transformer";
+import { IsArray, IsBoolean, IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from "class-validator";
 
 export class CreateProductDto {
     @IsString()
@@ -9,10 +10,12 @@ export class CreateProductDto {
     @IsOptional()
     description?: string;
 
+    @Type(() => Number)
     @IsNumber()
     @Min(0)
     price: number
 
+    @Type(() => Number)
     @IsNumber()
     @Min(0)
     quantity: number;
@@ -29,4 +32,8 @@ export class CreateProductDto {
     @IsOptional()
     category_id?: string;
 
+    @Type(() => Boolean)
+    @IsBoolean()
+    @IsOptional()
+    active: boolean;
 }

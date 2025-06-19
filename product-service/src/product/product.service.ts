@@ -2,10 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Product } from './schemas/product.schema';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { generateUniqueSlug } from '../utils/slug';
+import { generateUniqueSlug } from '../common/utils/slug';
 import { ProductRepository } from './product.repository';
-import { buildMongooseQuery, MongooseQuery } from 'src/utils/build-mongoose-query';
-import { PaginationResult } from 'src/common/interfaces/pagination-result.interface';
+import { buildMongooseQuery, MongooseQuery } from 'src/common/utils/build-mongoose-query';
+import { PaginationResult } from 'src/common/pagination/pagination-result.interface';
 
 @Injectable()
 export class ProductService {

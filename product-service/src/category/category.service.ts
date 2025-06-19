@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CategoryRepository } from './category.repository';
-import { generateUniqueSlug } from 'src/utils/slug';
+import { generateUniqueSlug } from 'src/common/utils/slug';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { Category } from './schemas/category.schema';
 import { UpdateCategoryDto } from './dto/update-category.dto';

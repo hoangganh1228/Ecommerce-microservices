@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsIn, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
-import { DEFAULT_PAGE, DEFAULT_LIMIT, MAX_LIMIT } from '../constants/pagination';
+import { MAX_LIMIT } from '../constants/pagination';
 
 export class ProductQueryDto {
   @IsOptional()
