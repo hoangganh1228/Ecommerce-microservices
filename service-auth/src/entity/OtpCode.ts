@@ -5,6 +5,14 @@ export enum OtpType {
     SMS = 'sms'
 }
 
+export enum OtpPurpose {
+    RESET_PASSWORD = 'reset_password',
+    VERIFY_ACCOUNT = 'verify_account',
+    VERIFY_TRANSACTION = 'verify_transaction',
+    TWO_FA = '2fa',
+    OTHER = 'other',
+}
+
 @Entity()
 export class OtpCode {
     @PrimaryGeneratedColumn()
@@ -21,6 +29,13 @@ export class OtpCode {
         enum: OtpType
     })
     type!: OtpType;
+
+    @Column({
+        type: 'enum',
+        enum: OtpPurpose,
+        default: OtpPurpose.OTHER
+    })
+    purpose!: OtpPurpose;
     
     @Column()
     expiresAt!: Date;

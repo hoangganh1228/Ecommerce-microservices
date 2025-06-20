@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "prod": "node dist/server.js",
-    "start": "nodemon --watch src --exec ts-node server.ts"
+    "start": "nodemon --watch src --exec ts-node server.ts",
+    "typeorm": "typeorm-ts-node-commonjs"
   },
   "author": "",
   "license": "ISC",

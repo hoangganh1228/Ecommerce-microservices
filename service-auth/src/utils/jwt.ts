@@ -7,8 +7,18 @@ if(!JWT_SECRET) {
 
 const secret: Secret = JWT_SECRET;
 
-export const signToken = (payload: object, expiresIn: SignOptions['expiresIn'] = '1h' ): string => {
-  return jwt.sign(payload, secret, { expiresIn });
+export const signToken = (
+    payload: object, 
+    expiresIn: SignOptions['expiresIn'] = '1h', 
+    issuer: string = process.env.JWT_ISSUER || 'hoangganh'
+): string => {
+    
+    return jwt.sign(payload, secret, { 
+        expiresIn,
+        issuer,
+        algorithm: 'HS256',
+    });
+
 };
 
 export const verifyToken = <T>(token: string): T | null => {

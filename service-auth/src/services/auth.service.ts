@@ -1,5 +1,5 @@
 import { AppDataSource } from "../config/data-source";
-import { Account } from "../models/Account";
+import { Account } from "../entity/Account";
 import bcrypt from 'bcrypt';
 import { signToken } from "../utils/jwt";
 
@@ -19,9 +19,12 @@ export class AuthService {
         if (!user) throw new Error('Invalid credentials');
         const valid = await bcrypt.compare(password, user.password);
         if (!valid) throw new Error('Invalid credentials');
-        
-        const token = signToken({email: user.email});
-        
+        const payload = {
+            id: user.id,
+            email: user.email,
+            role: "customer"
+        }
+        const token = signToken(payload);
         return token;
     }
 } 

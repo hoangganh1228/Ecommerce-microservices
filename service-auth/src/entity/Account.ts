@@ -11,6 +11,12 @@ export class Account {
     @Column()
     password!: string;
 
+    @Column({ default: true })
+    isActive!: boolean;
+
+    @Column({ default: false })
+    isDeleted!: boolean;
+
     @CreateDateColumn()
     createdAt!: Date;
 

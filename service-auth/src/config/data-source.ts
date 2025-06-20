@@ -1,7 +1,8 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
-import { Account } from '../models/Account';
-import { OtpCode } from '../models/OtpCode';
+import { Account } from '../entity/Account';
+import { OtpCode } from '../entity/OtpCode';
+import { User } from '../entity/User';
 
 export const AppDataSource = new DataSource({
   type: 'mysql',
@@ -11,5 +12,5 @@ export const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD || '',
   database: process.env.DB_NAME || 'auth_service',
   synchronize: true,
-  entities: [Account, OtpCode],
+  entities: [Account, OtpCode, User],
 });
