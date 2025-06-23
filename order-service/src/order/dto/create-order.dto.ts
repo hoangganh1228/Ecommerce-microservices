@@ -1,22 +1,26 @@
-import { IsInt, Min, IsArray, ValidateNested } from 'class-validator';
+import { IsInt, IsOptional, IsEnum, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-
-class OrderItemDto {
-  @IsInt()
-  productId: string;
-
-  @IsInt()
-  @Min(1)
-  quantity: number;
-
-  @IsInt()
-  @Min(0)
-  price: number;
-}
+import { CreateOrderItemDto } from '../../order-items/dto/create-order-item.dto';
 
 export class CreateOrderDto {
+  @IsInt()
+  user_id: number;
+
+  @IsOptional()
+  @IsInt()
+  voucher_id?: number;
+
+  @IsEnum(['pending', 'completed', 'cancelled'])
+  status: 'pending' | 'completed' | 'cancelled';
+
+  @IsInt()
+  total_price: number;
+
+  @IsOptional()
+  note?: string;
+
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => OrderItemDto)
-  items: OrderItemDto[];
+  @Type(() => CreateOrderItemDto)
+  items: CreateOrderItemDto[];
 }
