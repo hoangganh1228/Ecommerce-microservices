@@ -1,17 +1,14 @@
 import { IsInt, IsOptional, IsEnum, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreateOrderItemDto } from '../../order-items/dto/create-order-item.dto';
+import { OrderStatus } from '../entities/order.entity';
 
 export class CreateOrderDto {
   @IsInt()
   user_id: number;
 
-  @IsOptional()
-  @IsInt()
-  voucher_id?: number;
-
-  @IsEnum(['pending', 'completed', 'cancelled'])
-  status: 'pending' | 'completed' | 'cancelled';
+  @IsEnum(OrderStatus)
+  status: OrderStatus;
 
   @IsInt()
   total_price: number;
