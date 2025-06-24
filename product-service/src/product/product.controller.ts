@@ -7,7 +7,7 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { ImageUploadService } from 'src/common/image/image-upload.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)    
 @Controller('products')
 export class ProductController {
     constructor(

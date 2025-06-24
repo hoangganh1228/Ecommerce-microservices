@@ -17,3 +17,13 @@ export const updateProfile = async (req: AuthenticatedRequest, res: Response): P
         res.status(500).json({ message: "Update failed", error: error.message });
     }
 }
+
+// export const getUser = async (req: Request, res: Response) => {
+//   const id = parseInt(req.params.id, 10);
+
+//   const user = await userService.getUserById(id);
+  
+//   if (!user) return res.status(404).json({ message: "User not found" });
+  
+//   return res.json(user);
+// };

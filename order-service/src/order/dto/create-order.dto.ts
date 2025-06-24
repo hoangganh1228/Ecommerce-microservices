@@ -1,11 +1,11 @@
-import { IsInt, IsOptional, IsEnum, IsArray, ValidateNested, IsNumber } from 'class-validator';
+import { IsOptional, IsEnum, IsArray, ValidateNested, IsNumber, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreateOrderItemDto } from '../../order-items/dto/create-order-item.dto';
 import { OrderStatus } from '../entities/order.entity';
 
 export class CreateOrderDto {
-  @IsInt()
-  user_id: number;
+  @IsString()
+  user_id: string;
 
   @IsEnum(OrderStatus)
   status: OrderStatus;

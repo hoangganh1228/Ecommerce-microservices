@@ -20,4 +20,8 @@ export class UserService {
 
         return this.userRepo.save(user);
     }
+
+    async getUserById(id: number) {
+        return this.userRepo.findOne({ where: { id } });
+    }
 }

@@ -7,7 +7,7 @@ export class OrderItem {
   id: number;
 
   @Column()
-  product_id: number;
+  product_id: string;
 
   @Column()
   product_name: string;
@@ -23,5 +23,5 @@ export class OrderItem {
 
   @ManyToOne(() => Order, order => order.items, { onDelete: 'CASCADE' })
   order: Order;
-
+  
   }
