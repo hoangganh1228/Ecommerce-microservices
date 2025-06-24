@@ -7,9 +7,6 @@ export class OrderItem {
   id: number;
 
   @Column()
-  order_id: number;
-
-  @Column()
   product_id: number;
 
   @Column()
