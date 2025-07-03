@@ -32,6 +32,7 @@ export class OrderService {
 
     for (const item of createOrderDto.items) {
       const productUrl = `${this.productServiceUrl}/${item.product_id}`;
+      console.log(productUrl);
       try {
         const res = await firstValueFrom(
           this.httpService.get(productUrl).pipe(
