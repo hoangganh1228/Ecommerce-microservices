@@ -22,7 +22,7 @@ export class Order {
   })
   status: OrderStatus;
 
-  @Column('numeric', { precision: 10, scale: 2 })
+  @Column('numeric', { precision: 100, scale: 2 })
   total_price: number;
 
   @Column({ type: 'text', nullable: true })

@@ -30,31 +30,32 @@ export class OrderService {
     //   throw new BadRequestException('User does not exist');
     // }
 
-    for (const item of createOrderDto.items) {
-      const productUrl = `${this.productServiceUrl}/${item.product_id}`;
-      console.log(productUrl);
-      try {
-        const res = await firstValueFrom(
-          this.httpService.get(productUrl).pipe(
-            timeout(2000), // limit 2s
-            catchError((error) => {
-              console.error(`Product service error:`, error.message || error);
-              return of({ data: null }); 
-            }),
-          )
-        );
+    // for (const item of createOrderDto.items) {
+    //   const productUrl = `${this.productServiceUrl}/${item.product_id}`;
+    //   console.log(productUrl);
+    //   try {
+    //     const res = await firstValueFrom(
+    //       this.httpService.get(productUrl).pipe(
+    //         timeout(2000), // limit 2s
+    //         catchError((error) => {
+    //           console.error(`Product service error:`, error.message || error);
+    //           return of({ data: null }); 
+    //         }),
+    //       )
+    //     );
 
-        if (!res.data) throw new BadRequestException(`Invalid product ${item.product_id}`);
-      } catch (err) {
-        throw new BadRequestException(`Product ${item.product_id} not found`);
-      }
-    }
-
+    //     if (!res.data) throw new BadRequestException(`Invalid product ${item.product_id}`);
+    //   } catch (err) {
+    //     throw new BadRequestException(`Product ${item.product_id} not found`);
+    //   }
+    // }
     if (!createOrderDto.total_price || createOrderDto.total_price <= 0) {
       const total = createOrderDto.items.reduce((sum, item) => sum + item.final_price, 0);
+      console.log(total);
       createOrderDto.total_price = total;
     }
-    return this.ordersRepo.create(createOrderDto);
+    const order = await this.ordersRepo.create(createOrderDto);
+    return order;
   }
 
   async findAll(): Promise<Order[]> {

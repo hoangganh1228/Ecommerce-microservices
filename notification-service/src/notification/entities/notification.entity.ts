@@ -32,7 +32,7 @@ export class Notification {
   createdAt: Date;
 
   @Column({ nullable: true })
-  productId?: number;
+  product_id?: number;
 
   @Column({ nullable: true })
   orderId?: number;
