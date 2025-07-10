@@ -5,6 +5,7 @@ import { CartModule } from './cart/cart.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
+import { RedisModule } from './common/redis/redis/redis.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -13,6 +14,7 @@ import { HttpModule } from '@nestjs/axios';
     MongooseModule.forRoot(
       process.env.MONGO_URI || 'mongodb://localhost:27017/cart-service',
     ),
+    RedisModule,
     CartModule,
     HttpModule,
   ],
