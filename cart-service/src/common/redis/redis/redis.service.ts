@@ -87,11 +87,18 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   }
 
   async getJson<T>(key: string): Promise<T | null> {
+    const start = process.hrtime.bigint();
     const value = await this.get(key);
+    const mid = process.hrtime.bigint();
     if (!value) return null;
-    
+
     try {
-      return JSON.parse(value);
+      const parsed = JSON.parse(value);
+      const end = process.hrtime.bigint();
+      console.log(
+        `[Redis] GET: ${(mid - start) / BigInt(1e6)}ms | PARSE: ${(end - mid) / BigInt(1e6)}ms`,
+      );
+      return parsed;
     } catch (error) {
       console.error('Redis getJson parse error:', error);
       return null;

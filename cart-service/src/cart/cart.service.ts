@@ -42,7 +42,12 @@ export class CartService {
 
   async addItem(userId: string, item: AddCartItemDto): Promise<Cart> {
     const cart = await this.cartModel.findOne({ userId });
+    const start = process.hrtime.bigint();
     const product = await this.fetchProductWithCache(item.product_id);
+    const end = process.hrtime.bigint();
+    console.log(
+      `[addItem] Fetch product took ${(end - start) / BigInt(1e6)}ms`,
+    );
     if (!product) {
       throw new NotFoundException('Product not found');
     }
@@ -118,35 +123,41 @@ export class CartService {
   private async fetchProductWithCache(
     productId: string,
   ): Promise<ProductResponseDto | null> {
+    const start = process.hrtime.bigint();
     const cacheKey = `${this.PRODUCT_CACHE_PREFIX}${productId}`;
 
     try {
-      // 1. Kiểm tra cache trước
       const cachedProduct =
         await this.redisService.getJson<ProductResponseDto>(cacheKey);
       if (cachedProduct) {
-        console.log(`Product ${productId} loaded from cache`);
+        const end = process.hrtime.bigint();
+        console.log(
+          `[fetchProductWithCache] Cache HIT total: ${(end - start) / BigInt(1e6)}ms`,
+        );
         return cachedProduct;
       }
 
-      // 2. Nếu không có cache, fetch từ API
-      console.log(`Product ${productId} not in cache, fetching from API`);
       const product = await this.fetchProduct(productId);
 
       if (product) {
-        // 3. Lưu vào cache với TTL
         await this.redisService.setJson(
           cacheKey,
           product,
           this.PRODUCT_CACHE_TTL,
         );
-        console.log(`Product ${productId} cached successfully`);
       }
+
+      const end = process.hrtime.bigint();
+      console.log(
+        `[fetchProductWithCache] Cache MISS total: ${(end - start) / BigInt(1e6)}ms`,
+      );
 
       return product;
     } catch (error) {
-      console.error(`Error fetching product ${productId} with cache:`, error);
-      // Fallback: fetch trực tiếp từ API nếu Redis có lỗi
+      const end = process.hrtime.bigint();
+      console.error(
+        `[fetchProductWithCache] Error, total: ${(end - start) / BigInt(1e6)}ms`,
+      );
       return await this.fetchProduct(productId);
     }
   }

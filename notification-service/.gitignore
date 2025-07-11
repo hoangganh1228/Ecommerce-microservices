@@ -2,7 +2,7 @@
 /dist
 /node_modules
 /build
-
+src/notification/firebase-key.json
 # Logs
 logs
 *.log
