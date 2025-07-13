@@ -3,22 +3,27 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { Notification } from './entities/notification.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
+import { databaseConfig } from './config/database.config';
+import { ConfigModule } from '@nestjs/config';
+import { NotificationController } from './controllers/notification.controller';
+import { RabbitMQService } from './services/rabbitmq.service';
+import { EmailService } from './services/email.service';
+import { NotificationService } from './services/notification.service';
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: '',
-      database: 'notification-service',
-      synchronize: true,
-      autoLoadEntities: true,
-      entities: [Notification],
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
     }),
+    TypeOrmModule.forRoot(databaseConfig),
+    TypeOrmModule.forFeature([Notification])
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [NotificationController],
+  providers: [
+    RabbitMQService,
+    EmailService,
+    NotificationService,
+    
+  ],
 })
 export class AppModule {}

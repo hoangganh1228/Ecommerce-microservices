@@ -9,7 +9,8 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(RabbitMQService.name);
   private connection: amqp.Connection;
   private channel: amqp.Channel;
-  async  onModuleInit() {
+
+  async onModuleInit() {
     await this.connect();
     await this.setupExchangesAndQueues(); 
   }
@@ -122,7 +123,7 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
         this.logger.error('Error publishing message', error);
       }
   }
-  async   Message(
+  async consumeMessage(
     queueName: string, 
     onMessage: (message: any) => Promise<void>
   ): Promise<void> {

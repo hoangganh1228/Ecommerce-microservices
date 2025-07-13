@@ -35,18 +35,58 @@ export class NotificationService {
     }
   }
 
-  async getNotificationsByUserId(userId: number, status?: NotificationStatus): Promise<Notification[]> {
-    const query = this.notificationRepository.createQueryBuilder('notification')
-      .where('notification.userId = :userId', { userId });
+  async getNotificationsByUser(userId: number, limit: number = 20): Promise<Notification[]> {
+    try {
+      return await this.notificationRepository.find({
+        where: { userId },
+        order: { createdAt: 'DESC' },
+        take: limit,
+      });
+    } catch (error) {
+      this.logger.error(`Failed to get notifications for user ${userId}`, error);
+      throw error;
+    }
+  }
+  
+  async getUnreadCount(userId: number): Promise<number> {
+    try {
+      return await this.notificationRepository.count({
+        where: {userId, isRead: false}
+      })
+    } catch (error) {
+      this.logger.error(`Failed to get unread count for user ${userId}`, error);
+      throw error;
+    }
+  }
 
-    if (status) {
-      query.andWhere('notification.status = :status', { status });
+  async deleteOldNotifications(days: number = 30): Promise<number> {
+    try {
+      const cutOfDate = new Date();
+      cutOfDate.setDate(cutOfDate.getDate() - days);
+
+      const result = await this.notificationRepository
+        .createQueryBuilder()
+        .delete()
+        .where('createdAt < :cutOfDate', { cutOfDate })
+        .andWhere('status = :status', {status: NotificationStatus.SENT})
+        .execute()
+
+      this.logger.log(`Deleted ${result.affected} old notifications`);
+      return result.affected || 0;
+    } catch (error) {
+      this.logger.error('Failed to delete old notifications', error);
+      throw error;
     }
 
-    return query.getMany();
   }
 
   async markAsRead(notificationId: number): Promise<void> {
-    await this.notificationRepository.update(notificationId, { isRead: true });
+    try {
+      await this.notificationRepository.update(id, { isRead: true });
+      this.logger.log(`Marked notification ${id} as read`);
+    } catch (error) {
+      this.logger.error(`Failed to mark notification ${id} as read`, error);
+      throw error;
+    }
   }
 }
