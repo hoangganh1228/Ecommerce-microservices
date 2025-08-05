@@ -3,6 +3,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { Notification, NotificationType, NotificationStatus } from '../entities/notification.entity';
 
+export interface CreateNotificationDto {
+  userId: string;
+  type: 'email' | 'sms' | 'push';
+  target: string;
+  title?: string;
+  message: string;
+  status?: NotificationStatus;
+  orderId?: string;
+  productId?: string;
+  metadata?: Record<string, any>;
+}
+
 @Injectable()
 export class NotificationService {
   private readonly logger = new Logger(NotificationService.name);
@@ -12,7 +24,7 @@ export class NotificationService {
     private readonly notificationRepository: Repository<Notification>,
   ) {}
 
-  async createNotification(notificationData: Partial<Notification>): Promise<Notification> {
+  async createNotification(createDto: CreateNotificationDto): Promise<Notification> {
     try {
       const notification = this.notificationRepository.create(notificationData);
       const savedNotification = await this.notificationRepository.save(notification);

@@ -6,32 +6,32 @@ import { Repository } from "typeorm";
 
 @Injectable()
 export class OrdersRepository extends BaseRepository<Order> {
-    constructor(
-      @InjectRepository(Order)
-      private readonly orderRepository: Repository<Order>,
-    ) {
-      super(orderRepository);
-    }
+  constructor(
+    @InjectRepository(Order)
+    private readonly orderRepository: Repository<Order>,
+  ) {
+    super(orderRepository);
+  }
 
-    async findWithsItems(id: string): Promise<Order | null> {
+  async findWithsItems(id: string): Promise<Order | null> {
+    return this.repo.findOne({
+      where: { id },
+      relations: ['items'],
+    }); 
+  }
+
+  async findByUser(userId: string): Promise<Order[]> {
+  return this.repo.find({
+      where: { user_id: userId },
+      relations: ['items'],
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  async findWithItems(id: string): Promise<Order | null> {
       return this.repo.findOne({
-        where: { id },
-        relations: ['items'],
-      }); 
-    }
-
-    async findByUser(userId: string): Promise<Order[]> {
-    return this.repo.find({
-        where: { user_id: userId },
-        relations: ['items'],
-        order: { createdAt: 'DESC' },
+          where: { id },
+          relations: ['items'],
       });
-    }
-
-    async findWithItems(id: string): Promise<Order | null> {
-        return this.repo.findOne({
-            where: { id },
-            relations: ['items'],
-        });
-    }
+  }
 }

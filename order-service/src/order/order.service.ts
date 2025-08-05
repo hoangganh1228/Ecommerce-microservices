@@ -34,25 +34,21 @@ export class OrderService {
     //   throw new BadRequestException('User does not exist');
     // }
 
-    // for (const item of createOrderDto.items) {
-    //   const productUrl = `${this.productServiceUrl}/${item.product_id}`;
-    //   console.log(productUrl);
-    //   try {
-    //     const res = await firstValueFrom(
-    //       this.httpService.get(productUrl).pipe(
-    //         timeout(2000), // limit 2s
-    //         catchError((error) => {
-    //           console.error(`Product service error:`, error.message || error);
-    //           return of({ data: null }); 
-    //         }),
-    //       )
-    //     );
-
-    //     if (!res.data) throw new BadRequestException(`Invalid product ${item.product_id}`);
-    //   } catch (err) {
-    //     throw new BadRequestException(`Product ${item.product_id} not found`);
-    //   }
-    // }
+    await Promise.all(
+      createOrderDto.items.map(async (item) => {
+        const productUrl = `${this.productServiceUrl}/${item.product_id}`;
+        const res = await firstValueFrom(
+          this.httpService.get(productUrl).pipe(
+            timeout(2000),
+            catchError((error) => {
+              console.error(`Product service error:`, error.message || error);
+              return of({ data: null });
+            })
+          )
+        );
+        if (!res.data) throw new BadRequestException(`Invalid product ${item.product_id}`);
+      })
+    );
     try {
       if (!createOrderDto.total_price || createOrderDto.total_price <= 0) {
         const total = createOrderDto.items.reduce((sum, item) => sum + item.final_price, 0);
@@ -77,6 +73,31 @@ export class OrderService {
       await this.publishOrderUpdatedEvent(updatedOrder, oldStatus, status);
     }
     return updatedOrder;
+  }
+
+  private async getUserInfo(userId: string): Promise<{email: string, name: string, address?: string}> {
+    try {
+      const userUrl = `${this.userServiceUrl}/${userId}`;
+      const res = await firstValueFrom(
+        this.httpService.get(userUrl).pipe(
+          timeout(5000),
+          catchError(() => of({ data: null }))
+        )
+      );
+      
+      return {
+        email: res.data?.email || 'user@example.com',
+        name: res.data?.name || 'User Name',
+        address: res.data?.address || 'Default Address'
+      };
+    } catch (error) {
+      console.error('Error fetching user info:', error);
+      return {
+        email: 'user@example.com',
+        name: 'User Name',
+        address: 'Default Address'
+      };
+    }
   }
 
   private async publishOrderCreatedEvent(order: Order): Promise<void> {
